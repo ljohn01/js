@@ -60,7 +60,30 @@ const bill = {
     age: "26"
 }
 
-console.log(bruce);
-console.log(bob);
-console.log(blaine);
-console.log(bill);
+const barry = {
+    id: 48,
+    name: "Barry",
+    occupation: "Runner",
+    age: "25"
+}
+
+const bilbo = {
+    id: 7,
+    name: "Bilbo",
+    occupation: "None",
+    age: "111"
+}
+
+// console.log(bruce);
+// console.log(bob);
+// console.log(blaine);
+// console.log(bill);
+
+const people = [bruce, bob, blaine, bill];
+people.pop();
+people.splice(1, 0, barry);
+people.splice(4, 0, bilbo);
+console.log(people);
+
+const totalAge = [(41 + 25 + 19 + 58 + 111)/5];
+console.log("The average age of this group of people is: ", totalAge ,"years old.");
