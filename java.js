@@ -76,56 +76,90 @@ const LearnerSubmissions = [
   }
 ];
 
-const getLearnerData = (CourseInfo, AssignmentGroup, LearnerSubmissions) => {
+// START OF WORK
+function pastDue(submissionDate, assigneddueDate) {
+  const submission = new Date(submissionDate);
+  const due = new Date(assigneddueDate);
 
-  let  result = [];
-  // checking for the date that the learner submitted
-  for (let i=0; i < LearnerSubmissions.length; i++){ 
-    const dateSubmitted = new Date(
-    LearnerSubmissions[i].submission.submitted_at
-    );
-    const dueDate = new Date(
-      AssignmentGroup.assignments[LearnerSubmissions[i].assignment_id -1].due_at
-    );
-    const dateNow = new Date();
-
-
-    const points_possible = 200;
-    let points1 = 197; //weighted avg points for  both assignments 1 and 2
-    let points2 = 179; //weighted avg points for  both assignments 1 and 2
-  
-    // checking if the assignment was submitted past due date
-    if (dueDate < dateNow){
-      return (points1*0.1);
-    }
-
-    if (dueDate < dateNow){
-      return  (points2*0.1);
-    }
-
-
-
-
-  }
-  
-  // const result = [
-  //   {
-  //     id: 125,
-  //     avg: 0.985, // (47 + 150) / (50 + 150)
-  //     1: 0.94, // 47 / 50
-  //     2: 1.0 // 150 / 150
-  //   },
-  //   {
-  //     id: 132,
-  //     avg: 0.82, // (39 + 125) / (50 + 150)
-  //     1: 0.78, // 39 / 50
-  //     2: 0.833 // late: (140 - 15) / 150
-  //   }
-  // ];
-
-  // return result;
+  return submission > due;
 }
 
+
+const today = new Date();
+const assigneddueDate = "2024-02-27"; // Due date for assignment with id 2
+
+if (pastDue(today, assigneddueDate)) {
+  console.log("Assignment is past due and you will get 10% deducted from your total score for Assignment 2.");
+} else {
+  console.log("Assignment is submitted on time.");
+}
+
+
+
+function getLearnerData(course, ag, submissions) {
+
+  // checking if course id matches the id under CourseInfo
+  if (AssignmentGroup.course_id !== CourseInfo.id) {
+    throw new Error("Invalid Course ID. AssignmentGroup does not belong to this course.");
+  }
+
+  // checking scores of assignments and returning a percentage
+  const totalScores = {};
+  const scorePercents = submissions.score / AssignmentGroup.assignments.points_possible;
+
+  if (new Date(submissions.submitted_at) > new Date(AssignmentGroup.assignments.due_at)) {
+    scorePercents -= 0.1;
+  }
+
+  totalScores[AssignmentGroup.assignments.id] = scorePercents;
+
+  let avgWeightScore = 0;
+  let avgWeight = 0;
+
+  for (AssignmentGroup.assignments.id of AssignmentGroup.assignments) {
+    if (AssignmentGroup.assignments.id in totalScores) {
+      const assignWeight = AssignmentGroup.assignments.points_possible * AssignmentGroup.group_weight;
+      avgWeightScore += totalScores[AssignmentGroup.assignments.id] * assignWeight;
+      avgWeight += assignWeight;
+    }
+  }
+
+  const avgScore = avgWeightScore / avgWeight;
+
+  // const result = {
+  //   id: CourseInfo.id,
+  //   avg: avgScore,
+  // };
+
+  // calculating total scores
+  for (const assignment of AssignmentGroup.assignments) {
+    if (AssignmentGroup.assignments in totalScores) {
+      result[AssignmentGroup.assignments] = totalScores[AssignmentGroup.assignments];
+    }
+    
+  }
+
+  const result = [
+    {
+      id: 125,
+      avg: 0.985, // (47 + 150) / (50 + 150)
+      1: 0.94, // 47 / 50
+      2: 1.0 // 150 / 150
+    },
+    {
+      id: 132,
+      avg: 0.82, // (39 + 125) / (50 + 150)
+      1: 0.78, // 39 / 50
+      2: 0.833 // late: (140 - 15) / 150
+    }
+  ];
+  return [result];
+}
+
+const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+
+
+console.log(result);
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 
 console.log(result);
