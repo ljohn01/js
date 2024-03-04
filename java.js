@@ -160,7 +160,5 @@ const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 
 
 console.log(result);
-const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 
-console.log(result);
 
